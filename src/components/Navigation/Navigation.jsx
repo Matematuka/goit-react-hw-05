@@ -5,6 +5,7 @@ import NotFoundPage from "../../pages/NotFoundPage";
 
 import clsx from "clsx";
 import css from "./Navigation.module.css";
+import MovieDetailsPage from "../../pages/MovieDetailsPage";
 
 const getNavLinkClassName = ({ isActive }) =>
   clsx(css.navLink, {
@@ -25,6 +26,7 @@ const Navigation = () => {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/movies" element={<MoviesPage />} />
+        <Route path="/movies/:movieid/*" element={<MovieDetailsPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
