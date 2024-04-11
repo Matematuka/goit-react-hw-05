@@ -1,15 +1,14 @@
 import { useEffect, useState, useRef } from "react";
-import { fetchHomePage } from "../services/api";
-// import toast from "react-hot-toast";
-import ErrorMessage from "../components/ErrorMessage/ErrorMessage";
-import Loader from "../components/Loader/Loader";
-import MovieList from "../components/MovieList/MovieList";
-
+import { fetchHomePage } from "../../services/api";
+import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
+import Loader from "../../components/Loader/Loader";
+import MovieList from "../../components/MovieList/MovieList";
 const HomePage = () => {
   const [trendMovies, setTrendMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const listRef = useRef(null);
+
   useEffect(() => {
     async function fetchTrendMovie() {
       try {
@@ -30,6 +29,7 @@ const HomePage = () => {
     <div>
       {isError && <ErrorMessage />}
       {isLoading && <Loader />}
+
       <MovieList movies={trendMovies} ref={listRef} />
     </div>
   );
