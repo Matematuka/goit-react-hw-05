@@ -30,7 +30,7 @@ const message = () =>
   });
 
 const MoviesPage = () => {
-  const [movies, setMovies] = useState(null);
+  const [movies, setMovies] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
@@ -44,12 +44,12 @@ const MoviesPage = () => {
         setIsError(false);
         setIsLoading(true);
         const response = await getMoviesPage(query);
-        console.log(response.results);
-        setMovies(() => response.results);
-        // if (response.total_results === 0) {
-        //   message();
-        // }
-      } catch {
+        setMovies(response.results);
+        if (response.total_results === 0) {
+          message();
+        }
+      } catch (error) {
+        console.log("error: ", error);
         setIsError(true);
       } finally {
         setIsLoading(false);
