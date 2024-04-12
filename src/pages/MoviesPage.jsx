@@ -1,11 +1,11 @@
 import { Formik, Field, Form } from "formik";
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { getMoviesPage } from "../services/api";
 import ErrorMessage from "../components/ErrorMessage/ErrorMessage";
 import Loader from "../components/Loader/Loader";
 import MovieList from "../components/MovieList/MovieList";
 import toast, { Toaster } from "react-hot-toast";
-// import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
 
 const notify = () =>
   toast("This field cannot be empty. Please enter a search query", {
@@ -29,43 +29,26 @@ const message = () =>
     },
   });
 
-const FORM_INITIAL_VALUES = {
-  searchTerm: "",
-};
-
 const MoviesPage = () => {
-  const [movies, setMovies] = useState([]);
-  const [query, setQuery] = useState("");
+  const [movies, setMovies] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const listRef = useRef(null);
 
-  const onSearchQuery = (searchTerm) => {
-    if (query !== searchTerm) {
-      setMovies([]);
-      setQuery(searchTerm);
-    }
-  };
-
-  const handleSubmit = (values) => {
-    if (values.searchTerm !== "") {
-      onSearchQuery(values.searchTerm);
-    } else {
-      notify();
-    }
-  };
+  const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get("query");
 
   useEffect(() => {
     if (!query) return;
     async function fetchSearchMovie() {
       try {
+        setIsError(false);
         setIsLoading(true);
         const response = await getMoviesPage(query);
         console.log(response.results);
-        setMovies((movies) => [...movies, ...response.results]);
-        if (response.total_results === 0) {
-          message();
-        }
+        setMovies(() => response.results);
+        // if (response.total_results === 0) {
+        //   message();
+        // }
       } catch {
         setIsError(true);
       } finally {
@@ -75,14 +58,20 @@ const MoviesPage = () => {
     fetchSearchMovie();
   }, [query]);
 
+  const handleSubmit = (value) => {
+    if (!value.query.trim()) return notify();
+    if (query === value.query) return;
+    setSearchParams({ query: value.query });
+  };
+
   return (
-    <div>
-      <Formik initialValues={FORM_INITIAL_VALUES} onSubmit={handleSubmit}>
+    <>
+      <Formik initialValues={{ query: "" }} onSubmit={handleSubmit}>
         <Form>
           <label>
             <Field
               type="text"
-              name="searchTerm"
+              name="query"
               autoComplete="off"
               autoFocus
               placeholder="Search movie..."
@@ -92,10 +81,10 @@ const MoviesPage = () => {
           <Toaster />
         </Form>
       </Formik>
+      {movies && <MovieList movies={movies} />}
       {isError && <ErrorMessage />}
       {isLoading && <Loader />}
-      <MovieList movies={movies} ref={listRef} />
-    </div>
+    </>
   );
 };
 

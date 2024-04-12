@@ -3,7 +3,7 @@ import { useState, useEffect, useRef, Suspense, lazy } from "react";
 import { getMovieDetails } from "../../services/api";
 import ErrorMessage from "../../components/ErrorMessage/ErrorMessage";
 import Loader from "../../components/Loader/Loader";
-import css from "./MovieDetais.module.css"
+import css from "./MovieDetais.module.css";
 
 const MovieCast = lazy(() => import("../../components/MovieCast/MovieCast"));
 const MovieReviews = lazy(() =>
@@ -19,6 +19,7 @@ const MovieDetailsPage = () => {
   const location = useLocation();
   console.log(location);
   const backLink = useRef(location.state ?? "/");
+
   useEffect(() => {
     async function fetchMovieDetails() {
       try {
@@ -59,7 +60,7 @@ const MovieDetailsPage = () => {
               </ul>
             </div>
           </div>
-          <div className= {css.moviedetails}>
+          <div className={css.moviedetails}>
             <h4>Additional Information</h4>
             <Link to="cast">Cast</Link>
             <Link to="reviews">Reviews</Link>
